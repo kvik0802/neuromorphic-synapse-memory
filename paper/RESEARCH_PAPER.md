@@ -1,6 +1,6 @@
 # Geometric, Topological, and Algebraic Consolidation in Continual Learning and Algorithmic Complexity
 
-**Author:** Independent Research Suite  
+**Author:** N. Vivekanand  
 **Repository:** [neuromorphic-synapse-memory](https://github.com/kvik0802/neuromorphic-synapse-memory)  
 **Date:** November 2026  
 

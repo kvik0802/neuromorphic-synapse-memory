@@ -206,7 +206,7 @@ story = []
 # Title & Metadata
 story.append(Paragraph("Geometric, Topological, and Algebraic Consolidation in Continual Learning and Algorithmic Complexity", title_style))
 story.append(Paragraph(
-    "<b>Vicky</b><br/>"
+    "<b>N. Vivekanand</b><br/>"
     "Neuromorphic Synapse Memory Lab &nbsp;|&nbsp; Independent Research Suite<br/>"
     "Source Repository: <font color='#1d4ed8'><u>https://github.com/kvik0802/neuromorphic-synapse-memory</u></font><br/>"
     "November 2026",
