@@ -42,7 +42,9 @@ class ContinualLearner:
         self.synaptic_gate = {}
         # Zero-Replay Orthogonal Gradient Projection Engine
         from models.orthogonal_projection import OrthogonalGradientProjector
+        from models.curvature_manifold import DynamicCurvatureManifoldProjector
         self.projector = OrthogonalGradientProjector(self.model, threshold=0.98, device=device)
+        self.dcmg_projector = DynamicCurvatureManifoldProjector(self.model, alpha=3.5, device=device)
         self.recorded_activations = {}
         self._register_hooks()
 
@@ -67,6 +69,13 @@ class ContinualLearner:
                 self.projector.extract_task_basis(name, all_acts)
         self.recorded_activations = {}
 
+    def consolidate_dcmg_manifold(self):
+        for name, act_list in self.recorded_activations.items():
+            if act_list:
+                all_acts = torch.cat(act_list, dim=0)
+                self.dcmg_projector.update_manifold_metric(name, all_acts)
+        self.recorded_activations = {}
+
     def parameters(self):
         return self.model.parameters()
 
@@ -77,6 +86,7 @@ class ContinualLearner:
         self.device = device
         self.model = self.model.to(device)
         self.projector.device = device
+        self.dcmg_projector.device = device
         return self
 
     # --- EWC ---

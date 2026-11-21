@@ -58,6 +58,8 @@ def train_task(model, loader, epochs=2, lr=1e-3):
                 model.ewc_n += 1
             if model.method == "orthogonal":
                 model.projector.project_gradients()
+            elif model.method == "dcmg":
+                model.dcmg_projector.apply_manifold_attenuation()
             opt.step()
             if model.method in ("si","nsm"):
                 model.si_update(lr)
@@ -71,6 +73,8 @@ def train_task(model, loader, epochs=2, lr=1e-3):
         model.update_synaptic_gate()
     elif model.method == "orthogonal":
         model.consolidate_orthogonal_basis()
+    elif model.method == "dcmg":
+        model.consolidate_dcmg_manifold()
     if model.method in ("replay","nsm"):
         xs, ys = [], []
         for x, y in loader:
