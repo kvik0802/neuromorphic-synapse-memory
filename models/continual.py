@@ -28,6 +28,12 @@ class ContinualLearner:
         if method == "hsd":
             from models.holomorphic_synapse import HolomorphicContinualMLP
             self.model = HolomorphicContinualMLP(hidden).to(device)
+        elif method == "dsse":
+            from models.dynamic_expansion import DynamicSubspaceMLP
+            self.model = DynamicSubspaceMLP(in_features=784, task_dim=64, num_classes=10).to(device)
+        elif method == "srsm":
+            from models.self_routing_manifold import SelfRoutingSynapticManifold
+            self.model = SelfRoutingSynapticManifold(in_features=784, hidden=128, num_classes=10).to(device)
         else:
             self.model = MLP(hidden).to(device)
         self.replay_size = replay_size

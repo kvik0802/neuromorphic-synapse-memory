@@ -96,6 +96,9 @@ def run_experiment(method, epochs=2):
     n_tasks = len(train_tasks)
     acc_matrix = []
     for ti in range(n_tasks):
+        if method in ("dsse", "srsm") and ti > 0:
+            model.model.allocate_next_task()
+            model.to(DEVICE)
         train_task(model, train_tasks[ti][1], epochs=epochs)
         accs = evaluate(model, test_tasks)
         acc_matrix.append(accs)
