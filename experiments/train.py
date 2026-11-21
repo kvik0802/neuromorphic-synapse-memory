@@ -77,6 +77,8 @@ def train_task(model, loader, epochs=2, lr=1e-3):
         model.consolidate_orthogonal_basis()
     elif model.method == "dcmg":
         model.consolidate_dcmg_manifold()
+    elif model.method == "hlaf":
+        model.model.freeze_current_task()
     elif model.method == "hsd":
         model.model.consolidate_task(task_id=0)
     if model.method in ("replay","nsm"):

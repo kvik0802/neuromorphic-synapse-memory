@@ -34,6 +34,9 @@ class ContinualLearner:
         elif method == "srsm":
             from models.self_routing_manifold import SelfRoutingSynapticManifold
             self.model = SelfRoutingSynapticManifold(in_features=784, hidden=128, num_classes=10).to(device)
+        elif method == "hlaf":
+            from models.lie_algebra_fiber import LieAlgebraContinualMLP
+            self.model = LieAlgebraContinualMLP(in_features=784, hidden=128, num_classes=10).to(device)
         else:
             self.model = MLP(hidden).to(device)
         self.replay_size = replay_size
