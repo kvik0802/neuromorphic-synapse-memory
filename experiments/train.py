@@ -56,6 +56,8 @@ def train_task(model, loader, epochs=2, lr=1e-3):
                     if p.grad is not None:
                         model.ewc_accum[n] += p.grad.detach() ** 2
                 model.ewc_n += 1
+            if model.method == "orthogonal":
+                model.projector.project_gradients()
             opt.step()
             if model.method in ("si","nsm"):
                 model.si_update(lr)
@@ -67,6 +69,8 @@ def train_task(model, loader, epochs=2, lr=1e-3):
         model.consolidate_ewc_from_accum()
         model.si_consolidate()
         model.update_synaptic_gate()
+    elif model.method == "orthogonal":
+        model.consolidate_orthogonal_basis()
     if model.method in ("replay","nsm"):
         xs, ys = [], []
         for x, y in loader:

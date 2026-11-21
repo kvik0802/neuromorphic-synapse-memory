@@ -40,6 +40,32 @@ class ContinualLearner:
         self.si_W = {}  # accumulators
         # NSM: synaptic gate
         self.synaptic_gate = {}
+        # Zero-Replay Orthogonal Gradient Projection Engine
+        from models.orthogonal_projection import OrthogonalGradientProjector
+        self.projector = OrthogonalGradientProjector(self.model, threshold=0.98, device=device)
+        self.recorded_activations = {}
+        self._register_hooks()
+
+    def _register_hooks(self):
+        def get_hook(name):
+            def hook(module, input, output):
+                if name not in self.recorded_activations:
+                    self.recorded_activations[name] = []
+                # Keep small sample of input activations to extract basis
+                if len(self.recorded_activations[name]) < 20:
+                    self.recorded_activations[name].append(input[0].detach())
+            return hook
+
+        for name, module in self.model.named_modules():
+            if isinstance(module, nn.Linear):
+                module.register_forward_hook(get_hook(name))
+
+    def consolidate_orthogonal_basis(self):
+        for name, act_list in self.recorded_activations.items():
+            if act_list:
+                all_acts = torch.cat(act_list, dim=0)
+                self.projector.extract_task_basis(name, all_acts)
+        self.recorded_activations = {}
 
     def parameters(self):
         return self.model.parameters()
@@ -50,6 +76,7 @@ class ContinualLearner:
     def to(self, device):
         self.device = device
         self.model = self.model.to(device)
+        self.projector.device = device
         return self
 
     # --- EWC ---
