@@ -25,7 +25,11 @@ class ContinualLearner:
     def __init__(self, method: str, device: str = "cpu", hidden: int = 256, replay_size: int = 2000):
         self.method = method
         self.device = device
-        self.model = MLP(hidden).to(device)
+        if method == "hsd":
+            from models.holomorphic_synapse import HolomorphicContinualMLP
+            self.model = HolomorphicContinualMLP(hidden).to(device)
+        else:
+            self.model = MLP(hidden).to(device)
         self.replay_size = replay_size
         self.replay_buffer = []  # list of (x, y)
         self.ewc_accum = None
